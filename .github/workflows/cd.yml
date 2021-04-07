@@ -1,0 +1,30 @@
+name: CD
+
+on:
+  release:
+    types: [ published ]
+
+jobs:
+
+  publish-package:
+    name: Publish package
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout commit
+        uses: actions/checkout@v2
+      - name: Setup Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
+          registry-url: 'https://registry.npmjs.org'
+      - run: npm install
+      - name: Build project
+        run: npm run build:ng-catcher
+      - name: Publish to NPM (dry-run)
+        run: npm publish dist/public-js/ng-catcher --access public --dry-run
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Publish to NPM
+        run: npm publish dist/public-js/ng-catcher --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
