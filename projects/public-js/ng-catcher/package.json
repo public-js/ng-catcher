@@ -2,11 +2,6 @@
   "name": "@public-js/ng-catcher",
   "description": "An Angular error catching library",
   "version": "11.0.0-beta.1",
-  "scripts": {
-    "clean:mocha": "rimraf ../../../coverage/ng-catcher && rimraf ../../../.nyc_output/ng-catcher",
-    "cover:mocha": "npm run clean:mocha && nyc npm run test:mocha",
-    "test:mocha": "cross-env TS_NODE_PROJECT=\"tsconfig.mocha.json\" mocha"
-  },
   "peerDependencies": {
     "@angular/common": "11.x",
     "@angular/core": "11.x",

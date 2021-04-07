@@ -18,9 +18,11 @@
 package-lock.json
 
 .nyc_output
+**/.nyc_output
 .grunt
 junit.xml
 /coverage
+**/coverage
 
 # logs
 .firebase

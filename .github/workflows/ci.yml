@@ -40,10 +40,10 @@ jobs:
         uses: codacy/codacy-coverage-reporter-action@master
         with:
           project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
-          coverage-reports: 'coverage/ng-catcher/lcov.info'
+          coverage-reports: 'coverage/lcov.info'
       - name: Report to Code Climate
         uses: paambaati/codeclimate-action@v2.7.5
         env:
           CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
         with:
-          coverageLocations: ${{ github.workspace }}/coverage/ng-catcher/lcov.info:lcov
+          coverageLocations: ${{ github.workspace }}/coverage/lcov.info:lcov
