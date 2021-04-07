@@ -1,0 +1,23 @@
+{
+  "name": "@public-js/ng-catcher",
+  "description": "An Angular error catching library",
+  "version": "11.0.0-beta.1",
+  "peerDependencies": {
+    "@angular/common": "11.x",
+    "@angular/core": "11.x",
+    "rxjs": "^6.6.3"
+  },
+  "license": "MIT",
+  "author": "Public JS <public-js@muffin.blue> (https://github.com/public-js/public-js)",
+  "bugs": {
+    "url": "https://github.com/public-js/ng-catcher/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/public-js/ng-catcher.git"
+  },
+  "homepage": "https://github.com/public-js/ng-catcher",
+  "engines": {
+    "node": ">=12.0.0"
+  }
+}
