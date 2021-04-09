@@ -1,6 +1,3 @@
-import { assert } from 'chai';
-import 'mocha';
-
 import { IErrorData } from '../interfaces/error-data';
 import { IErrorItem } from '../interfaces/error-item';
 import { NgCatcherConfig } from '../interfaces/ng-catcher-config';
@@ -33,12 +30,12 @@ class NgcErrorItemSpec extends NgcErrorItem {
 describe('NgcErrorItem', () => {
 
     const config: Required<NgCatcherConfig> = {
-        serviceUrl: '_serviceUrl',
-        project: '_project',
-        version: '1',
+        serviceUrl: 'https://httpstat.us/200',
+        project: 'ng-catcher-test',
+        version: '0.0',
         sessionId: 'someRandomIdentifier',
-        maxQueue: 10,
-        maxTimeout: 10,
+        maxQueue: 1,
+        maxTimeout: 5,
         params: null,
     };
 
@@ -55,17 +52,17 @@ describe('NgcErrorItem', () => {
 
     it('should be instantiated', () => {
         errorItem = new NgcErrorItemSpec(errorData.type, errorData.module, config);
-        assert.isDefined(errorItem);
+        expect(errorItem).toBeDefined();
     });
 
     it('should return item', () => {
         errorItem = new NgcErrorItemSpec(errorData.type, errorData.module, config);
-        assert.isDefined(errorItem.getItem());
+        expect(errorItem.getItem()).toBeDefined();
     });
 
     it('should contain all other params', () => {
         errorItem = new NgcErrorItemSpec(errorData.type, errorData.module, config);
-        assert.deepEqual(errorItem.getItem(), {
+        expect(errorItem.getItem()).toEqual( {
             type: errorData.type,
             module: errorData.module,
             project: config.project,

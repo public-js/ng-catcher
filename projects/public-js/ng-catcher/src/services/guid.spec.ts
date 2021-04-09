@@ -1,22 +1,21 @@
-import { assert } from 'chai';
-import 'mocha';
-
 import { Guid } from './guid';
 
 
 describe('Guid', () => {
 
     it('should be defined', () => {
-        assert.isDefined(Guid);
+        expect(Guid).toBeDefined();
+        expect(Guid).toBeTruthy();
     });
 
     it('should return value', () => {
-        assert.isDefined(Guid.generate());
-        assert.isOk(Guid.generate());
+        const guid = Guid.generate();
+        expect(guid).toBeDefined();
+        expect(guid).toBeTruthy();
     });
 
     it('should return valid value', () => {
-        assert.match(Guid.generate(), /^\S{8}-\S{4}-\S{4}-\S{4}-\S{12}$/);
+        expect(Guid.generate()).toMatch(/^\S{8}-\S{4}-\S{4}-\S{4}-\S{12}$/);
     });
 
 });

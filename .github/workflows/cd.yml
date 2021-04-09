@@ -6,25 +6,84 @@ on:
 
 jobs:
 
-  publish-package:
+  publish:
     name: Publish package
     runs-on: ubuntu-latest
     steps:
       - name: Checkout commit
         uses: actions/checkout@v2
-      - name: Setup Node
+      - name: Setup node
         uses: actions/setup-node@v1
         with:
           node-version: '12.x'
-          registry-url: 'https://registry.npmjs.org'
-      - run: npm install
+      - name: Get npm cache path
+        id: npm-cache-path
+        run: echo "::set-output name=path::$(npm config get cache)"
+      - name: Check for npm cache
+        uses: actions/cache@v2
+        id: npm-cache
+        with:
+          path: ${{ steps.npm-cache-path.outputs.path }}
+          key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
+      - name: Clean install node modules (if no cache)
+        if: steps.npm-cache.outputs.cache-hit != 'true'
+        run: npm ci
+      - name: Install node modules (cached)
+        if: steps.npm-cache.outputs.cache-hit == 'true'
+        run: npm i
       - name: Build project
         run: npm run build:ng-catcher
       - name: Publish to NPM (dry-run)
-        run: npm publish dist/public-js/ng-catcher --access public --dry-run
+        run: npm run npm:pub-test:ng-catcher
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Publish to NPM
-        run: npm publish dist/public-js/ng-catcher --access public
+        run: npm run npm:pub:ng-catcher
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  coverage:
+    needs: [ publish ]
+    name: Code coverage report
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout commit
+        uses: actions/checkout@v2
+      - name: Setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
+      - name: Get npm cache path
+        id: npm-cache-path
+        run: echo "::set-output name=path::$(npm config get cache)"
+      - name: Check for npm cache
+        uses: actions/cache@v2
+        id: npm-cache
+        with:
+          path: ${{ steps.npm-cache-path.outputs.path }}
+          key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
+      - name: Clean install node modules (if no cache)
+        if: steps.npm-cache.outputs.cache-hit != 'true'
+        run: npm ci
+      - name: Install node modules (cached)
+        if: steps.npm-cache.outputs.cache-hit == 'true'
+        run: npm i
+      - name: Test & coverage
+        run: npm run cover:jas:ng-catcher
+      - name: Report to Codacy
+        uses: codacy/codacy-coverage-reporter-action@master
+        with:
+          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
+          coverage-reports: 'coverage/lcov.info'
+      - name: Report to Code Climate
+        uses: paambaati/codeclimate-action@v2.7.5
+        env:
+          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+        with:
+          coverageLocations: ${{ github.workspace }}/coverage/lcov.info:lcov
+      - name: Report to Codecov
+        uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage/cobertura-coverage.xml
+          flags: release,jasmine

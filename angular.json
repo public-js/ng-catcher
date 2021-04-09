@@ -94,6 +94,14 @@
               "project": "projects/public-js/ng-catcher/ng-package.prod.json"
             }
           }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/public-js/ng-catcher/src/test.ts",
+            "tsConfig": "projects/public-js/ng-catcher/tsconfig.spec.json",
+            "karmaConfig": "projects/public-js/ng-catcher/karma.conf.js"
+          }
         }
       }
     }

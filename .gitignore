@@ -8,20 +8,18 @@
 .npmrc
 /dist
 
-/node_modules
 **/node_modules
 /jspm_packages
 /.yarn
 /.pnp
 /vendor
 .pnp.js
-package-lock.json
+!package-lock.json
+*/**/package-lock.json
 
-.nyc_output
 **/.nyc_output
 .grunt
-junit.xml
-/coverage
+**/junit.xml
 **/coverage
 
 # logs

@@ -1,6 +1,3 @@
-import { assert } from 'chai';
-import 'mocha';
-
 import { IErrorData } from '../interfaces/error-data';
 import { NgCatcherConfig } from '../interfaces/ng-catcher-config';
 import { NgcErrorEvent } from './ngc-error-event.model';
@@ -9,12 +6,12 @@ import { NgcErrorEvent } from './ngc-error-event.model';
 describe('NgcErrorEvent', () => {
 
     const config: Required<NgCatcherConfig> = {
-        serviceUrl: '_serviceUrl',
-        project: '_project',
-        version: '1',
+        serviceUrl: 'https://httpstat.us/200',
+        project: 'ng-catcher-test',
+        version: '0.0',
         sessionId: 'someRandomIdentifier',
-        maxQueue: 10,
-        maxTimeout: 10,
+        maxQueue: 1,
+        maxTimeout: 5,
         params: null,
     };
 
@@ -31,29 +28,29 @@ describe('NgcErrorEvent', () => {
 
     it('should be instantiated', () => {
         errorEvent = new NgcErrorEvent(errorData, config);
-        assert.isDefined(errorEvent);
+        expect(errorEvent).toBeDefined();
     });
 
     it('should return item', () => {
         errorEvent = new NgcErrorEvent(errorData, config);
-        assert.isDefined(errorEvent.getItem());
+        expect(errorEvent.getItem()).toBeDefined();
     });
 
     it('should contain valid time', () => {
         errorEvent = new NgcErrorEvent(errorData, config);
-        assert.match(errorEvent.getItem().time, /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/);
+        expect(errorEvent.getItem().time).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/);
     });
 
     it('should match passed time', () => {
         const now = new Date();
         errorEvent = new NgcErrorEvent(errorData, config, now);
-        assert.strictEqual(errorEvent.getItem().time, now.toISOString());
+        expect(errorEvent.getItem().time).toBe(now.toISOString());
     });
 
     it('should contain all other params', () => {
         const now = new Date();
         errorEvent = new NgcErrorEvent(errorData, config, now);
-        assert.deepEqual(errorEvent.getItem(), {
+        expect(errorEvent.getItem()).toEqual( {
             type: errorData.type,
             module: errorData.module,
             project: config.project,

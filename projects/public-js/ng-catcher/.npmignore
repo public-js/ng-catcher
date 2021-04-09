@@ -11,6 +11,7 @@
 .prettierrc.js
 jest.config.js
 nyc.config.js
+karma.conf.js
 tsconfig.*.json
 tsconfig.json
 CODE_OF_CONDUCT.md
