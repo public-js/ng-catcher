@@ -28,7 +28,7 @@
     "enableIvy": false
   },
   "exclude": [
-    "src/test.ts.bak",
+    "src/test.ts",
     "**/*.spec.ts"
   ]
 }

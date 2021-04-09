@@ -5,6 +5,8 @@
 [![License](https://img.shields.io/npm/l/@public-js/ng-catcher?style=flat)](https://www.npmjs.com/package/@public-js/ng-catcher)
 
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/b676cb7041974c45818309851cb043f6)](https://www.codacy.com/gh/public-js/ng-catcher/dashboard)
+[![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/public-js/ng-catcher.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/public-js/ng-catcher/context:javascript)
+[![codecov](https://codecov.io/gh/public-js/ng-catcher/branch/main/graph/badge.svg?token=NBALZKTFJR)](https://codecov.io/gh/public-js/ng-catcher)
 [![Maintainability](https://api.codeclimate.com/v1/badges/290f2cb87329f90e139c/maintainability)](https://codeclimate.com/github/public-js/ng-catcher/maintainability)
 
 ---

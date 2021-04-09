@@ -55,6 +55,7 @@ export class NgCatcherService implements OnDestroy {
 
     public ngOnDestroy(): void {
         this.send$.complete();
+        clearTimeout(this.timer);
     }
 
     private trySend(onTimer: boolean = false): void {
