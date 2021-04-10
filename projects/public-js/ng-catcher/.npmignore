@@ -1,6 +1,7 @@
 ## @public-js/ng-catcher
 
 /tests
+.browserslistrc
 .editorconfig
 .eslintignore
 .eslintrc.base.js
@@ -9,9 +10,10 @@
 .mocharc.js
 .npmignore
 .prettierrc.js
+commitlint.config.js
 jest.config.js
-nyc.config.js
 karma.conf.js
+nyc.config.js
 tsconfig.*.json
 tsconfig.json
 CODE_OF_CONDUCT.md

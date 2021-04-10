@@ -1,12 +1,13 @@
 import { HttpClientModule } from '@angular/common/http';
 import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+
 import { NgCatcherConfigService, NgCatcherModule } from '@public-js/ng-catcher';
 
 import { AppComponent } from './app.component';
 
 
-const ngCatcherConfig = (cs: NgCatcherConfigService): () => void => () =>
+const ngCatcherConfig = (cs: NgCatcherConfigService): () => void => (): void =>
     cs.setConfig({
         serviceUrl: 'https://httpstat.us/200',
         project: 'ng-catcher-demo',

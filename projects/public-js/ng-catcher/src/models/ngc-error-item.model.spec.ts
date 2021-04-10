@@ -6,7 +6,7 @@ import { NgcErrorItem } from './ngc-error-item.model';
 
 class NgcErrorItemSpec extends NgcErrorItem {
 
-    public constructor(
+    constructor(
         type: string,
         module: string | null,
         config: Required<NgCatcherConfig>,
@@ -28,7 +28,6 @@ class NgcErrorItemSpec extends NgcErrorItem {
 }
 
 describe('NgcErrorItem', () => {
-
     const config: Required<NgCatcherConfig> = {
         serviceUrl: 'https://httpstat.us/200',
         project: 'ng-catcher-test',
@@ -62,7 +61,7 @@ describe('NgcErrorItem', () => {
 
     it('should contain all other params', () => {
         errorItem = new NgcErrorItemSpec(errorData.type, errorData.module, config);
-        expect(errorItem.getItem()).toEqual( {
+        expect(errorItem.getItem()).toEqual({
             type: errorData.type,
             module: errorData.module,
             project: config.project,
@@ -71,5 +70,4 @@ describe('NgcErrorItem', () => {
             params: config.params,
         });
     });
-
 });

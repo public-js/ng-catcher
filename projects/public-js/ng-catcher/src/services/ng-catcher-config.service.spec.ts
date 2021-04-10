@@ -5,7 +5,6 @@ import { NgCatcherConfigService } from './ng-catcher-config.service';
 
 
 describe('NgCatcherConfigService', () => {
-
     const config: NgCatcherConfig = {
         serviceUrl: 'https://httpstat.us/200',
         project: 'ng-catcher-test',
@@ -49,5 +48,4 @@ describe('NgCatcherConfigService', () => {
                 expect(value?.serviceUrl).toEqual(config.serviceUrl)
             );
     });
-
 });

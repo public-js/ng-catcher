@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, NgZone, OnDestroy } from '@angular/core';
-import { Subject, Observable, of } from 'rxjs';
-import { catchError, filter, exhaustMap, first, mapTo, tap, take } from 'rxjs/operators';
+import { Observable, of, Subject } from 'rxjs';
+import { catchError, exhaustMap, filter, first, mapTo, take, tap } from 'rxjs/operators';
 
 import { IErrorItem } from '../interfaces/error-item';
 import { NgCatcherConfig } from '../interfaces/ng-catcher-config';
@@ -62,10 +62,10 @@ export class NgCatcherService implements OnDestroy {
         if (this.config && this.queue.length > 0) {
             if (this.queue.length >= this.config.maxQueue) {
                 this.send$.next(this.config);
+            } else if (onTimer) {
+                this.send$.next(this.config);
             } else {
-                onTimer
-                    ? this.send$.next(this.config)
-                    : this.resetTimer();
+                this.resetTimer();
             }
         }
     }

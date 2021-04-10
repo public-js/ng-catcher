@@ -1,0 +1,11 @@
+!.eslintrc.base.js
+!**/.eslintrc.js
+!**/.mocharc.js
+!**/.prettierrc.js
+!**/commitlint.config.js
+!**/jest.config.js
+!**/karma.conf.js
+!**/nyc.config.js
+
+**/node_modules/
+**/dist/

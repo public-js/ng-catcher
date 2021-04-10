@@ -11,7 +11,7 @@ export class NgcErrorEvent extends NgcErrorItem {
     private readonly eDetails: GenericObject | null;
     private readonly eTime: string;
 
-    public constructor(
+    constructor(
         data: IErrorData,
         config: Required<NgCatcherConfig>,
         time?: Date,

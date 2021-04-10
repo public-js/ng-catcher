@@ -40,7 +40,7 @@ export class AppComponent {
                 map((response: IFakeResponse) =>
                     value = response.someValue.find(v => v === 200)),
             )
-            .subscribe();
+            .subscribe(() => console.log(value));
     }
 
 }

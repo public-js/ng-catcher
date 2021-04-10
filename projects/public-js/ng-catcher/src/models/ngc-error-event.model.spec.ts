@@ -4,7 +4,6 @@ import { NgcErrorEvent } from './ngc-error-event.model';
 
 
 describe('NgcErrorEvent', () => {
-
     const config: Required<NgCatcherConfig> = {
         serviceUrl: 'https://httpstat.us/200',
         project: 'ng-catcher-test',
@@ -50,7 +49,7 @@ describe('NgcErrorEvent', () => {
     it('should contain all other params', () => {
         const now = new Date();
         errorEvent = new NgcErrorEvent(errorData, config, now);
-        expect(errorEvent.getItem()).toEqual( {
+        expect(errorEvent.getItem()).toEqual({
             type: errorData.type,
             module: errorData.module,
             project: config.project,
@@ -62,5 +61,4 @@ describe('NgcErrorEvent', () => {
             time: now.toISOString(),
         });
     });
-
 });

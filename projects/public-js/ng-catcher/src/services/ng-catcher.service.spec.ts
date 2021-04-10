@@ -3,15 +3,14 @@ import { NgZone } from '@angular/core';
 import { fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { filter, take } from 'rxjs/operators';
 
-import { NgcErrorEvent } from '../models/ngc-error-event.model';
 import { IErrorData } from '../interfaces/error-data';
 import { NgCatcherConfig } from '../interfaces/ng-catcher-config';
-import { NgCatcherConfigService } from './ng-catcher-config.service';
+import { NgcErrorEvent } from '../models/ngc-error-event.model';
 import { NgCatcherService } from './ng-catcher.service';
+import { NgCatcherConfigService } from './ng-catcher-config.service';
 
 
 describe('NgCatcherService', () => {
-
     const config: Required<NgCatcherConfig> = {
         serviceUrl: 'https://httpstat.us/200',
         project: 'ng-catcher-test',
@@ -32,7 +31,7 @@ describe('NgCatcherService', () => {
     let ngCatcherService: NgCatcherService;
     let httpTestingController: HttpTestingController;
     let ngCatcherConfigService: NgCatcherConfigService;
-    let ngZone: NgZone;
+    // let ngZone: NgZone;
 
     beforeEach(() => {
         TestBed.configureTestingModule({
@@ -42,7 +41,7 @@ describe('NgCatcherService', () => {
 
         httpTestingController = TestBed.inject(HttpTestingController);
         ngCatcherConfigService = TestBed.inject(NgCatcherConfigService);
-        ngZone = TestBed.inject(NgZone);
+        TestBed.inject(NgZone);
         ngCatcherService = TestBed.inject(NgCatcherService);
     });
 
@@ -104,5 +103,4 @@ describe('NgCatcherService', () => {
             }));
         ngCatcherConfigService.setConfig(config);
     });
-
 });

@@ -17,6 +17,7 @@
 !package-lock.json
 */**/package-lock.json
 
+**/.eslintcache
 **/.nyc_output
 .grunt
 **/junit.xml
