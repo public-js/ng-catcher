@@ -3,15 +3,14 @@ import { NgZone } from '@angular/core';
 import { fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { filter, take } from 'rxjs/operators';
 
-import { NgcErrorEvent } from '../models/ngc-error-event.model';
 import { IErrorData } from '../interfaces/error-data';
 import { NgCatcherConfig } from '../interfaces/ng-catcher-config';
-import { NgCatcherConfigService } from './ng-catcher-config.service';
+import { NgcErrorEvent } from '../models/ngc-error-event.model';
 import { NgCatcherService } from './ng-catcher.service';
+import { NgCatcherConfigService } from './ng-catcher-config.service';
 
 
 describe('NgCatcherService', () => {
-
     const config: Required<NgCatcherConfig> = {
         serviceUrl: 'https://httpstat.us/200',
         project: 'ng-catcher-test',
@@ -19,7 +18,7 @@ describe('NgCatcherService', () => {
         sessionId: 'someRandomIdentifier',
         maxQueue: 1,
         maxTimeout: 5,
-        params: null,
+        params: { param: false },
     };
 
     const errorData: IErrorData = {
@@ -29,20 +28,24 @@ describe('NgCatcherService', () => {
         details: {},
     };
 
-    let ngCatcherService: NgCatcherService;
     let httpTestingController: HttpTestingController;
     let ngCatcherConfigService: NgCatcherConfigService;
-    let ngZone: NgZone;
+    let ngCatcherService: NgCatcherService;
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            imports: [HttpClientTestingModule],
-            providers: [NgCatcherConfigService, NgCatcherService],
+            imports: [
+                HttpClientTestingModule,
+            ],
+            providers: [
+                NgCatcherConfigService,
+                NgCatcherService,
+            ],
         });
 
         httpTestingController = TestBed.inject(HttpTestingController);
         ngCatcherConfigService = TestBed.inject(NgCatcherConfigService);
-        ngZone = TestBed.inject(NgZone);
+        TestBed.inject(NgZone);
         ngCatcherService = TestBed.inject(NgCatcherService);
     });
 
@@ -51,7 +54,6 @@ describe('NgCatcherService', () => {
     });
 
     it('should be initialized', () => {
-        expect(ngCatcherService).toBeDefined();
         expect(ngCatcherService).toBeTruthy();
     });
 
@@ -102,7 +104,49 @@ describe('NgCatcherService', () => {
                 expect(testRequest.request.method).toBe('POST');
                 expect(testRequest.request.body).toEqual([errorItem]);
             }));
-        ngCatcherConfigService.setConfig(config);
+        ngCatcherConfigService.setConfig({ ...config, maxQueue: 2 });
     });
 
+    it('should post 2 logs at once', () => {
+        const errorItem = new NgcErrorEvent(errorData, config).getItem();
+
+        ngCatcherConfigService.getConfig$()
+            .pipe(
+                filter(conf => conf !== null),
+                take(1),
+            )
+            .subscribe(() => {
+                ngCatcherService.push(errorItem);
+                ngCatcherService.push(errorItem);
+
+                const testRequest = httpTestingController.expectOne(config.serviceUrl);
+                testRequest.flush(null, { status: 200, statusText: 'OK' });
+                ngCatcherService.ngOnDestroy();
+
+                expect(testRequest.request.method).toBe('POST');
+                expect(testRequest.request.body).toEqual([errorItem, errorItem]);
+            });
+        ngCatcherConfigService.setConfig({ ...config, maxQueue: 2 });
+    });
+
+    // it('should fail to post 1 log', () => {
+    //     const errorItem = new NgcErrorEvent(errorData, config).getItem();
+    //
+    //     ngCatcherConfigService.getConfig$()
+    //         .pipe(
+    //             filter(conf => conf !== null),
+    //             take(1),
+    //         )
+    //         .subscribe(() => {
+    //             ngCatcherService.push(errorItem);
+    //
+    //             const testRequest = httpTestingController.expectOne(config.serviceUrl);
+    //             testRequest.error(new ErrorEvent('Error'), { status: 500, statusText: 'Error' });
+    //             ngCatcherService.ngOnDestroy();
+    //
+    //             expect(testRequest.request.method).toBe('POST');
+    //             expect(testRequest.request.body).toEqual([errorItem]);
+    //         });
+    //     ngCatcherConfigService.setConfig(config);
+    // });
 });

@@ -1,25 +1,25 @@
-import { Injectable, ErrorHandler, NgZone, Inject } from '@angular/core';
+import { ErrorHandler, Inject, Injectable, NgZone } from '@angular/core';
 import { filter, take, tap } from 'rxjs/operators';
 
 import { IErrorItem } from '../interfaces/error-item';
 import { NgCatcherConfig } from '../interfaces/ng-catcher-config';
 import { NgcErrorEvent } from '../models/ngc-error-event.model';
-import { NgCatcherConfigService } from './ng-catcher-config.service';
 import { NgCatcherService } from './ng-catcher.service';
+import { NgCatcherConfigService } from './ng-catcher-config.service';
 import { NG_CATCHER_SERVICE_TOKEN } from './tokens';
 
 @Injectable({ providedIn: 'root' })
 export class NgCatcherErrorService implements ErrorHandler {
 
-    private static readonly EVENT_TYPE = 'client';
-    private static readonly EVENT_MODULE = null;
+    private static readonly eventType = 'client';
+    private static readonly eventModule = null;
 
     private queue: { error: any; time: Date }[] = [];
     private timer: any;
 
     private config: Required<NgCatcherConfig> | null = null;
 
-    public constructor(
+    constructor(
         @Inject(NG_CATCHER_SERVICE_TOKEN) private ngCatcherService: NgCatcherService,
         private configService: NgCatcherConfigService,
         private ngZone: NgZone,
@@ -28,46 +28,52 @@ export class NgCatcherErrorService implements ErrorHandler {
             .pipe(
                 filter(<Conf = Required<NgCatcherConfig>>(config: Conf | null): config is Conf => config !== null),
                 take(1),
-                tap((config: Required<NgCatcherConfig>) => this.config = config)
+                tap((config: Required<NgCatcherConfig>) => {
+                    this.config = config;
+                    this.dequeue(config);
+                })
             )
             .subscribe();
     }
 
-    private static reportError(config: Required<NgCatcherConfig>, error: any, time?: Date): IErrorItem {
+    private static reportError(config: Required<NgCatcherConfig>, error: Error | any, time?: Date): IErrorItem {
         return new NgcErrorEvent({
-                type: NgCatcherErrorService.EVENT_TYPE,
-                module: NgCatcherErrorService.EVENT_MODULE,
-                description: null,
-                details: {
-                    error,
-                    name: error.name || undefined,
-                    message: error.message || undefined,
-                    stack: error.stack || undefined,
-                },
+            type: NgCatcherErrorService.eventType,
+            module: NgCatcherErrorService.eventModule,
+            description: null,
+            details: {
+                error,
+                name: error?.name,
+                message: error?.message,
+                stack: error?.stack,
             },
-            config,
-            time,
-        ).getItem();
+        }, config, time).getItem();
     }
 
-    public handleError(error: any): void {
+    public handleError(error: Error | any): void {
         this.ngZone.run(() => this.tryPush(error));
     }
 
-    private tryPush(error: any, onTimer: boolean = false): void {
+    private tryPush(error: Error | any, onTimer: boolean = false): void {
         if (error) {
             if (this.config) {
                 this.ngCatcherService.push(NgCatcherErrorService.reportError(this.config, error));
             } else {
                 this.queue.push({ error, time: new Date() });
+                this.resetTimer();
             }
         }
         if (onTimer) {
-            this.config ? this.dequeue(this.config) : this.resetTimer();
+            if (this.config) {
+                this.dequeue(this.config);
+            } else {
+                this.resetTimer();
+            }
         }
     }
 
     private dequeue(config: Required<NgCatcherConfig>): void {
+        clearTimeout(this.timer);
         this.queue.forEach((item: { error: any; time: Date }) => {
             this.ngCatcherService.push(NgCatcherErrorService.reportError(config, item.error, item.time));
         });

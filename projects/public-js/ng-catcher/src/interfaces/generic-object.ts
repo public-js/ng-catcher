@@ -1,3 +1,3 @@
 export interface GenericObject {
-    [param: string]: number | string;
+    [param: string]: boolean | number | string | null;
 }

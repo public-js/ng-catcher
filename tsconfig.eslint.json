@@ -1,0 +1,27 @@
+{
+  "extends": "./tsconfig.app.json",
+  "include": [
+    "src/**/*.ts",
+    ".eslintrc.base.js",
+    ".eslintrc.js",
+    ".mocharc.js",
+    ".prettierrc.js",
+    "commitlint.config.js",
+    "jest.config.js",
+    "karma.conf.js",
+    "nyc.config.js",
+    "projects/**/*.ts",
+    "projects/**/.eslintrc.base.js",
+    "projects/**/.eslintrc.js",
+    "projects/**/.mocharc.js",
+    "projects/**/.prettierrc.js",
+    "projects/**/commitlint.config.js",
+    "projects/**/jest.config.js",
+    "projects/**/karma.conf.js",
+    "projects/**/nyc.config.js"
+  ],
+  "exclude": [
+    "src/**/*.d.ts",
+    "projects/**/*.d.ts"
+  ]
+}

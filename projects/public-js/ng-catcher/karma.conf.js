@@ -1,4 +1,6 @@
-module.exports = function (config) {
+/* eslint-disable @typescript-eslint/no-require-imports */
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+module.exports = function(config) {
     config.set({
         basePath: '',
         frameworks: ['jasmine', '@angular-devkit/build-angular'],
@@ -18,10 +20,11 @@ module.exports = function (config) {
         },
         exclude: ['src/test.ts'],
         coverageReporter: {
-            dir: require('path').join(__dirname, '../../../coverage'),
+            // eslint-disable-next-line @typescript-eslint/no-var-requires
+            dir: require('path').join(__dirname, '../../../coverage/ng-catcher'),
             reporters: [
-                {type: 'lcovonly', subdir: '.'},
-                {type: 'cobertura', subdir: '.'},
+                { type: 'lcovonly', subdir: '.' },
+                { type: 'cobertura', subdir: '.' },
             ],
         },
         specReporter: {

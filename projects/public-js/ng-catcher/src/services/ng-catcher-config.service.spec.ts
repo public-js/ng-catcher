@@ -5,7 +5,6 @@ import { NgCatcherConfigService } from './ng-catcher-config.service';
 
 
 describe('NgCatcherConfigService', () => {
-
     const config: NgCatcherConfig = {
         serviceUrl: 'https://httpstat.us/200',
         project: 'ng-catcher-test',
@@ -19,14 +18,15 @@ describe('NgCatcherConfigService', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            providers: [NgCatcherConfigService],
+            providers: [
+                NgCatcherConfigService,
+            ],
         });
 
         ngCatcherConfigService = TestBed.inject(NgCatcherConfigService);
     });
 
     it('should be initialized', () => {
-        expect(ngCatcherConfigService).toBeDefined();
         expect(ngCatcherConfigService).toBeTruthy();
     });
 
@@ -49,5 +49,4 @@ describe('NgCatcherConfigService', () => {
                 expect(value?.serviceUrl).toEqual(config.serviceUrl)
             );
     });
-
 });

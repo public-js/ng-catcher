@@ -6,22 +6,22 @@ import { catchError, filter, take, tap } from 'rxjs/operators';
 import { IErrorItem } from '../interfaces/error-item';
 import { NgCatcherConfig } from '../interfaces/ng-catcher-config';
 import { NgcErrorEvent } from '../models/ngc-error-event.model';
-import { NgCatcherConfigService } from './ng-catcher-config.service';
 import { NgCatcherService } from './ng-catcher.service';
+import { NgCatcherConfigService } from './ng-catcher-config.service';
 import { NG_CATCHER_SERVICE_TOKEN } from './tokens';
 
 @Injectable({ providedIn: 'root' })
 export class NgCatcherHttpService implements HttpInterceptor {
 
-    private static readonly EVENT_TYPE = 'http';
-    private static readonly EVENT_MODULE = null;
+    private static readonly eventType = 'http';
+    private static readonly eventModule = null;
 
     private queue: { error: HttpErrorResponse; time: Date }[] = [];
     private timer: any;
 
     private config: Required<NgCatcherConfig> | null = null;
 
-    public constructor(
+    constructor(
         @Inject(NG_CATCHER_SERVICE_TOKEN) private ngCatcherService: NgCatcherService,
         private configService: NgCatcherConfigService,
         private ngZone: NgZone,
@@ -30,29 +30,29 @@ export class NgCatcherHttpService implements HttpInterceptor {
             .pipe(
                 filter(<Conf = Required<NgCatcherConfig>>(config: Conf | null): config is Conf => config !== null),
                 take(1),
-                tap((config: Required<NgCatcherConfig>) => this.config = config),
+                tap((config: Required<NgCatcherConfig>) => {
+                    this.config = config;
+                    this.dequeue(config);
+                })
             )
             .subscribe();
     }
 
     private static reportError(config: Required<NgCatcherConfig>, error: HttpErrorResponse, time?: Date): IErrorItem {
         return new NgcErrorEvent({
-                type: NgCatcherHttpService.EVENT_TYPE,
-                module: NgCatcherHttpService.EVENT_MODULE,
-                description: null,
-                details: {
-                    url: error.url || '',
-                    message: error.message,
-                    status: error.status,
-                    statusText: error.statusText,
-                    error: typeof error.error === 'object'
-                        ? JSON.stringify(error.error)
-                        : error.error,
-                },
+            type: NgCatcherHttpService.eventType,
+            module: NgCatcherHttpService.eventModule,
+            description: null,
+            details: {
+                url: error.url ?? '',
+                message: error.message,
+                status: error.status,
+                statusText: error.statusText,
+                error: typeof error.error === 'object'
+                    ? JSON.stringify(error.error)
+                    : error.error,
             },
-            config,
-            time,
-        ).getItem();
+        }, config, time).getItem();
     }
 
     public intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
@@ -75,14 +75,20 @@ export class NgCatcherHttpService implements HttpInterceptor {
                 this.ngCatcherService.push(NgCatcherHttpService.reportError(this.config, error));
             } else {
                 this.queue.push({ error, time: new Date() });
+                this.resetTimer();
             }
         }
         if (onTimer) {
-            this.config ? this.dequeue(this.config) : this.resetTimer();
+            if (this.config) {
+                this.dequeue(this.config);
+            } else {
+                this.resetTimer();
+            }
         }
     }
 
     private dequeue(config: Required<NgCatcherConfig>): void {
+        clearTimeout(this.timer);
         this.queue.forEach((item: { error: any; time: Date }) => {
             this.ngCatcherService.push(NgCatcherHttpService.reportError(config, item.error, item.time));
         });

@@ -7,8 +7,7 @@ import { Guid } from './guid';
 @Injectable({ providedIn: 'root' })
 export class NgCatcherConfigService {
 
-    private config$: ReplaySubject<Required<NgCatcherConfig> | null> =
-        new ReplaySubject<Required<NgCatcherConfig> | null>(1);
+    private config$: ReplaySubject<Required<NgCatcherConfig> | null> = new ReplaySubject<Required<NgCatcherConfig> | null>(1);
 
     constructor() {
         this.config$.next(null);
@@ -17,10 +16,10 @@ export class NgCatcherConfigService {
     public setConfig(config: NgCatcherConfig): void {
         this.config$.next({
             ...config,
-            sessionId: config.sessionId || Guid.generate(),
-            maxQueue: config.maxQueue || 10,
-            maxTimeout: config.maxTimeout || 15,
-            params: config.params || null,
+            sessionId: config.sessionId ?? Guid.generate(),
+            maxQueue: config.maxQueue ?? 10,
+            maxTimeout: config.maxTimeout ?? 15,
+            params: config.params ?? null,
         });
     }
 

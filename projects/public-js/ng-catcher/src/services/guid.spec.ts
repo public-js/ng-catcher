@@ -2,7 +2,6 @@ import { Guid } from './guid';
 
 
 describe('Guid', () => {
-
     it('should be defined', () => {
         expect(Guid).toBeDefined();
         expect(Guid).toBeTruthy();
@@ -17,5 +16,4 @@ describe('Guid', () => {
     it('should return valid value', () => {
         expect(Guid.generate()).toMatch(/^\S{8}-\S{4}-\S{4}-\S{4}-\S{12}$/);
     });
-
 });
