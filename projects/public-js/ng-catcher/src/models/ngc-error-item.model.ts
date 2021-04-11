@@ -21,7 +21,7 @@ export abstract class NgcErrorItem {
         this.eProject = config.project;
         this.eVersion = config.version;
         this.eSessionId = config.sessionId;
-        this.eParams = config.params ?? null;
+        this.eParams = config.params;
     }
 
     public abstract getItem(): IErrorItem;

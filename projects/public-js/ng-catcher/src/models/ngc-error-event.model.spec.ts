@@ -11,7 +11,7 @@ describe('NgcErrorEvent', () => {
         sessionId: 'someRandomIdentifier',
         maxQueue: 1,
         maxTimeout: 5,
-        params: null,
+        params: { param: false },
     };
 
     const errorData: IErrorData = {
@@ -27,12 +27,12 @@ describe('NgcErrorEvent', () => {
 
     it('should be instantiated', () => {
         errorEvent = new NgcErrorEvent(errorData, config);
-        expect(errorEvent).toBeDefined();
+        expect(errorEvent).toBeTruthy();
     });
 
     it('should return item', () => {
         errorEvent = new NgcErrorEvent(errorData, config);
-        expect(errorEvent.getItem()).toBeDefined();
+        expect(errorEvent.getItem()).toBeTruthy();
     });
 
     it('should contain valid time', () => {

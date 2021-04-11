@@ -28,35 +28,39 @@ export class NgCatcherErrorService implements ErrorHandler {
             .pipe(
                 filter(<Conf = Required<NgCatcherConfig>>(config: Conf | null): config is Conf => config !== null),
                 take(1),
-                tap((config: Required<NgCatcherConfig>) => this.config = config)
+                tap((config: Required<NgCatcherConfig>) => {
+                    this.config = config;
+                    this.dequeue(config);
+                })
             )
             .subscribe();
     }
 
-    private static reportError(config: Required<NgCatcherConfig>, error: any, time?: Date): IErrorItem {
+    private static reportError(config: Required<NgCatcherConfig>, error: Error | any, time?: Date): IErrorItem {
         return new NgcErrorEvent({
             type: NgCatcherErrorService.eventType,
             module: NgCatcherErrorService.eventModule,
             description: null,
             details: {
                 error,
-                name: error.name || undefined,
-                message: error.message || undefined,
-                stack: error.stack || undefined,
+                name: error?.name,
+                message: error?.message,
+                stack: error?.stack,
             },
         }, config, time).getItem();
     }
 
-    public handleError(error: any): void {
+    public handleError(error: Error | any): void {
         this.ngZone.run(() => this.tryPush(error));
     }
 
-    private tryPush(error: any, onTimer: boolean = false): void {
+    private tryPush(error: Error | any, onTimer: boolean = false): void {
         if (error) {
             if (this.config) {
                 this.ngCatcherService.push(NgCatcherErrorService.reportError(this.config, error));
             } else {
                 this.queue.push({ error, time: new Date() });
+                this.resetTimer();
             }
         }
         if (onTimer) {
@@ -69,6 +73,7 @@ export class NgCatcherErrorService implements ErrorHandler {
     }
 
     private dequeue(config: Required<NgCatcherConfig>): void {
+        clearTimeout(this.timer);
         this.queue.forEach((item: { error: any; time: Date }) => {
             this.ngCatcherService.push(NgCatcherErrorService.reportError(config, item.error, item.time));
         });

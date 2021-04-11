@@ -2,6 +2,7 @@
 
 /tests
 .browserslistrc
+.codecov.yml
 .editorconfig
 .eslintignore
 .eslintrc.base.js

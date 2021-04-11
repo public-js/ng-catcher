@@ -30,7 +30,10 @@ export class NgCatcherHttpService implements HttpInterceptor {
             .pipe(
                 filter(<Conf = Required<NgCatcherConfig>>(config: Conf | null): config is Conf => config !== null),
                 take(1),
-                tap((config: Required<NgCatcherConfig>) => this.config = config),
+                tap((config: Required<NgCatcherConfig>) => {
+                    this.config = config;
+                    this.dequeue(config);
+                })
             )
             .subscribe();
     }
@@ -72,6 +75,7 @@ export class NgCatcherHttpService implements HttpInterceptor {
                 this.ngCatcherService.push(NgCatcherHttpService.reportError(this.config, error));
             } else {
                 this.queue.push({ error, time: new Date() });
+                this.resetTimer();
             }
         }
         if (onTimer) {
@@ -84,6 +88,7 @@ export class NgCatcherHttpService implements HttpInterceptor {
     }
 
     private dequeue(config: Required<NgCatcherConfig>): void {
+        clearTimeout(this.timer);
         this.queue.forEach((item: { error: any; time: Date }) => {
             this.ngCatcherService.push(NgCatcherHttpService.reportError(config, item.error, item.time));
         });

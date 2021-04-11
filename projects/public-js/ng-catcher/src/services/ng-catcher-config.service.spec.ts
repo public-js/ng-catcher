@@ -18,14 +18,15 @@ describe('NgCatcherConfigService', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            providers: [NgCatcherConfigService],
+            providers: [
+                NgCatcherConfigService,
+            ],
         });
 
         ngCatcherConfigService = TestBed.inject(NgCatcherConfigService);
     });
 
     it('should be initialized', () => {
-        expect(ngCatcherConfigService).toBeDefined();
         expect(ngCatcherConfigService).toBeTruthy();
     });
 

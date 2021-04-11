@@ -35,7 +35,7 @@ describe('NgcErrorItem', () => {
         sessionId: 'someRandomIdentifier',
         maxQueue: 1,
         maxTimeout: 5,
-        params: null,
+        params: { param: false },
     };
 
     const errorData: IErrorData = {
@@ -51,12 +51,12 @@ describe('NgcErrorItem', () => {
 
     it('should be instantiated', () => {
         errorItem = new NgcErrorItemSpec(errorData.type, errorData.module, config);
-        expect(errorItem).toBeDefined();
+        expect(errorItem).toBeTruthy();
     });
 
     it('should return item', () => {
         errorItem = new NgcErrorItemSpec(errorData.type, errorData.module, config);
-        expect(errorItem.getItem()).toBeDefined();
+        expect(errorItem.getItem()).toBeTruthy();
     });
 
     it('should contain all other params', () => {

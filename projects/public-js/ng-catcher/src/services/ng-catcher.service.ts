@@ -60,9 +60,7 @@ export class NgCatcherService implements OnDestroy {
 
     private trySend(onTimer: boolean = false): void {
         if (this.config && this.queue.length > 0) {
-            if (this.queue.length >= this.config.maxQueue) {
-                this.send$.next(this.config);
-            } else if (onTimer) {
+            if (this.queue.length >= this.config.maxQueue || onTimer) {
                 this.send$.next(this.config);
             } else {
                 this.resetTimer();

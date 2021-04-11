@@ -18,7 +18,7 @@ describe('NgCatcherService', () => {
         sessionId: 'someRandomIdentifier',
         maxQueue: 1,
         maxTimeout: 5,
-        params: null,
+        params: { param: false },
     };
 
     const errorData: IErrorData = {
@@ -28,15 +28,19 @@ describe('NgCatcherService', () => {
         details: {},
     };
 
-    let ngCatcherService: NgCatcherService;
     let httpTestingController: HttpTestingController;
     let ngCatcherConfigService: NgCatcherConfigService;
-    // let ngZone: NgZone;
+    let ngCatcherService: NgCatcherService;
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            imports: [HttpClientTestingModule],
-            providers: [NgCatcherConfigService, NgCatcherService],
+            imports: [
+                HttpClientTestingModule,
+            ],
+            providers: [
+                NgCatcherConfigService,
+                NgCatcherService,
+            ],
         });
 
         httpTestingController = TestBed.inject(HttpTestingController);
@@ -50,7 +54,6 @@ describe('NgCatcherService', () => {
     });
 
     it('should be initialized', () => {
-        expect(ngCatcherService).toBeDefined();
         expect(ngCatcherService).toBeTruthy();
     });
 
@@ -101,6 +104,49 @@ describe('NgCatcherService', () => {
                 expect(testRequest.request.method).toBe('POST');
                 expect(testRequest.request.body).toEqual([errorItem]);
             }));
-        ngCatcherConfigService.setConfig(config);
+        ngCatcherConfigService.setConfig({ ...config, maxQueue: 2 });
     });
+
+    it('should post 2 logs at once', () => {
+        const errorItem = new NgcErrorEvent(errorData, config).getItem();
+
+        ngCatcherConfigService.getConfig$()
+            .pipe(
+                filter(conf => conf !== null),
+                take(1),
+            )
+            .subscribe(() => {
+                ngCatcherService.push(errorItem);
+                ngCatcherService.push(errorItem);
+
+                const testRequest = httpTestingController.expectOne(config.serviceUrl);
+                testRequest.flush(null, { status: 200, statusText: 'OK' });
+                ngCatcherService.ngOnDestroy();
+
+                expect(testRequest.request.method).toBe('POST');
+                expect(testRequest.request.body).toEqual([errorItem, errorItem]);
+            });
+        ngCatcherConfigService.setConfig({ ...config, maxQueue: 2 });
+    });
+
+    // it('should fail to post 1 log', () => {
+    //     const errorItem = new NgcErrorEvent(errorData, config).getItem();
+    //
+    //     ngCatcherConfigService.getConfig$()
+    //         .pipe(
+    //             filter(conf => conf !== null),
+    //             take(1),
+    //         )
+    //         .subscribe(() => {
+    //             ngCatcherService.push(errorItem);
+    //
+    //             const testRequest = httpTestingController.expectOne(config.serviceUrl);
+    //             testRequest.error(new ErrorEvent('Error'), { status: 500, statusText: 'Error' });
+    //             ngCatcherService.ngOnDestroy();
+    //
+    //             expect(testRequest.request.method).toBe('POST');
+    //             expect(testRequest.request.body).toEqual([errorItem]);
+    //         });
+    //     ngCatcherConfigService.setConfig(config);
+    // });
 });
