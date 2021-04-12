@@ -4,7 +4,7 @@ import { ErrorHandler, NgModule } from '@angular/core';
 import { NgCatcherService } from './services/ng-catcher.service';
 import { NgCatcherErrorService } from './services/ng-catcher-error.service';
 import { NgCatcherHttpService } from './services/ng-catcher-http.service';
-import { NG_CATCHER_SERVICE_TOKEN } from './services/tokens';
+import { NG_CATCHER_SERVICE } from './services/tokens';
 
 @NgModule({
     imports: [
@@ -21,7 +21,7 @@ import { NG_CATCHER_SERVICE_TOKEN } from './services/tokens';
             multi: true,
         },
         {
-            provide: NG_CATCHER_SERVICE_TOKEN,
+            provide: NG_CATCHER_SERVICE,
             useClass: NgCatcherService,
         },
     ],

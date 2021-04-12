@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, NgZone, OnDestroy } from '@angular/core';
 import { Observable, of, Subject } from 'rxjs';
-import { catchError, exhaustMap, filter, first, mapTo, take, tap } from 'rxjs/operators';
+import { catchError, delay, exhaustMap, filter, first, mapTo, retryWhen, scan, take, tap } from 'rxjs/operators';
 
 import { IErrorItem } from '../interfaces/error-item';
 import { NgCatcherConfig } from '../interfaces/ng-catcher-config';
@@ -12,10 +12,13 @@ export class NgCatcherService implements OnDestroy {
 
     private queue: IErrorItem[] = [];
     private timer: any;
-    private send$: Subject<NgCatcherConfig> = new Subject<NgCatcherConfig>();
+    private send$: Subject<Required<NgCatcherConfig>> = new Subject<Required<NgCatcherConfig>>();
 
     private timeout = 15000;
     private config: Required<NgCatcherConfig> | null = null;
+
+    private noRetry = false;
+    private noRetry$: Subject<IErrorItem[]> = new Subject<IErrorItem[]>();
 
     constructor(
         private configService: NgCatcherConfigService,
@@ -35,14 +38,27 @@ export class NgCatcherService implements OnDestroy {
 
         this.send$
             .pipe(
-                filter((config: NgCatcherConfig) => Boolean(config)),
-                exhaustMap((config: NgCatcherConfig) =>
+                filter((config: Required<NgCatcherConfig>) => Boolean(config)),
+                exhaustMap((config: Required<NgCatcherConfig>) =>
                     this.send(config, this.queue.slice(0, config.maxQueue))
                         .pipe(
-                            tap((success: boolean) =>
-                                success && this.queue.splice(0, config.maxQueue)),
+                            retryWhen((errors$: Observable<any>) =>
+                                errors$
+                                    .pipe(
+                                        scan((tries: number) => tries + 1, 0),
+                                        tap((tries: number) => {
+                                            if (tries >= config.retryMax) {
+                                                this.noRetry = tries >= config.retryMax;
+                                                this.noRetry$.next(this.queue);
+                                                clearTimeout(this.timer);
+                                            }
+                                        }),
+                                        delay(config.retryTimeout * 1000),
+                                    )
+                            ),
+                            tap((success: boolean) => success && this.queue.splice(0, config.maxQueue)),
                             tap(() => this.resetTimer()),
-                        ),
+                        )
                 ),
             )
             .subscribe();
@@ -53,13 +69,18 @@ export class NgCatcherService implements OnDestroy {
         this.trySend();
     }
 
+    public get stoppedTrying$(): Observable<IErrorItem[]> {
+        return this.noRetry$.asObservable();
+    }
+
     public ngOnDestroy(): void {
         this.send$.complete();
+        this.noRetry$.complete();
         clearTimeout(this.timer);
     }
 
     private trySend(onTimer: boolean = false): void {
-        if (this.config && this.queue.length > 0) {
+        if (this.config && this.queue.length > 0 && !this.noRetry) {
             if (this.queue.length >= this.config.maxQueue || onTimer) {
                 this.send$.next(this.config);
             } else {

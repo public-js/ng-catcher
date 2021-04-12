@@ -62,10 +62,10 @@ jobs:
           flags: release,jasmine
 
       - name: Publish to NPM (dry-run)
-        run: npm run npm:dry:ng-catcher
+        run: npm publish ./dist/public-js/ng-catcher --access public --dry-run
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Publish to NPM
-        run: npm run npm:pub:ng-catcher
+        run: npm publish ./dist/public-js/ng-catcher --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

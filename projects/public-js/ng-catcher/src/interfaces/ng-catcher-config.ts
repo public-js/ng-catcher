@@ -8,5 +8,7 @@ export interface NgCatcherConfig<Params = GenericObject | null> {
     sessionId?: string;
     maxQueue?: number;
     maxTimeout?: number;
+    retryMax?: number;
+    retryTimeout?: number;
     params?: Params;
 }
