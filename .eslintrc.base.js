@@ -6,7 +6,6 @@ module.exports = {
     parser: '@typescript-eslint/parser',
     plugins: [
         '@typescript-eslint',
-        'decorator-position',
         'import',
         'rxjs',
         'simple-import-sort',
@@ -190,13 +189,8 @@ module.exports = {
             named: 'never',
             asyncArrow: 'always',
         }],
-        /** -------------------- ESLint plugin Decorator position -------------------- */
-        'decorator-position/decorator-position': ['error', {
-            properties: 'prefer-inline',
-            methods: 'above',
-        }],
         /** -------------------- ESLint plugin Import -------------------- */
-        'import/newline-after-import': ['error', { count: 2 }],
+        'import/newline-after-import': ['error', { count: 1 }],
         'import/no-deprecated': 'warn',
         'import/order': 'off',
         /** -------------------- ESLint plugin RxJS -------------------- */

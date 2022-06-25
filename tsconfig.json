@@ -15,7 +15,7 @@
     "noUnusedLocals": true,
     "pretty": true,
     "strict": true,
-    "target": "es5",
+    "target": "es2020",
     "allowJs": false,
     "checkJs": false,
     "skipLibCheck": false,
