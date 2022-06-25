@@ -19,6 +19,8 @@ export class NgCatcherConfigService {
             sessionId: config.sessionId ?? Guid.generate(),
             maxQueue: config.maxQueue ?? 10,
             maxTimeout: config.maxTimeout ?? 15,
+            retryMax: config.retryMax ?? 5,
+            retryTimeout: config.retryTimeout ?? 15,
             params: config.params ?? null,
         });
     }

@@ -18,6 +18,8 @@ describe('NgCatcherService', () => {
         sessionId: 'someRandomIdentifier',
         maxQueue: 1,
         maxTimeout: 5,
+        retryMax: 3,
+        retryTimeout: 5,
         params: { param: false },
     };
 

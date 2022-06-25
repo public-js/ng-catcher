@@ -16,7 +16,7 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v1
         with:
-          node-version: 12
+          node-version: 16
 
       - name: Get npm cache path
         id: npm-cache-path
@@ -62,10 +62,10 @@ jobs:
           flags: release,jasmine
 
       - name: Publish to NPM (dry-run)
-        run: npm run npm:dry:ng-catcher
+        run: npm publish ./dist/public-js/ng-catcher --access public --dry-run
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Publish to NPM
-        run: npm run npm:pub:ng-catcher
+        run: npm publish ./dist/public-js/ng-catcher --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
